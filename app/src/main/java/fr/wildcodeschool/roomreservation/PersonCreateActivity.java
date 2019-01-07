@@ -1,11 +1,14 @@
 package fr.wildcodeschool.roomreservation;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class PersonCreateActivity extends AppCompatActivity {
 
@@ -35,5 +38,25 @@ public class PersonCreateActivity extends AppCompatActivity {
 
     private void addPersonToDB(String firstname, String lastname) {
         // TODO : add person into database
+
+            //Initialisation de l'accès à la base de données :
+        DBhelper mDbHelper = new DBhelper(PersonCreateActivity.this);
+
+            //Ouverture d'un accès en écriture :
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+
+        //Une "carte" vide de l'objet à insérer est créée :
+        ContentValues person = new ContentValues();
+
+        //Ici sont associées les valeurs aux colonnes de la table
+        person.put(DBcontract.PersonEntry.COLUMN_NAME_FIRSTNAME, firstname);
+        person.put(DBcontract.PersonEntry.COLUMN_NAME_LASTNAME, lastname);
+
+        //ne fois remplie, la "carte" de la personne est insérée dans la table correspondante.
+        //Un identifiant unique est alors retourné :
+        long newPersonId = db.insert(DBcontract.PersonEntry.TABLE_NAME, null, person);
+
+        Toast.makeText(this, String.valueOf(newPersonId), Toast.LENGTH_SHORT).show();
     }
 }
